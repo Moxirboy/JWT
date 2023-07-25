@@ -1,14 +1,10 @@
-package repository
+package configs
 
 import (
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/joho/godotenv/autoload"
-)
-
-const (
-	usersTable = "users"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -27,6 +23,13 @@ func Configuration() *Config {
 		panic(err)
 	}
 	return &Instance
+}
+
+func InitConfig() (string, error) {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	port := viper.GetString("port")
+	return port, viper.ReadInConfig()
 }
 func NewPostgresConfig(cfg *Config) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
