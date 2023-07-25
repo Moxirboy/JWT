@@ -7,4 +7,4 @@ run: build
 migrate:
     migrate --path ./migrations/postgres --database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' up
 migrate-down:
-     migrate --path ./migrations/postgres --database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' down 1
+      migrate --path ./migrations/postgres --database 'postgres://postgres:qwerty@localhost:5436/postgres?sslmode=disable' down 1
