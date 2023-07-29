@@ -26,8 +26,8 @@ func GenerateToken(username string, password string) (string, error) {
 	})
 	return token.SignedString([]byte(Jwt.signingKey))
 }
-func ParseToken(accesstoken string) (int, error) {
-	token, err := jwt.ParseWithClaims(accesstoken, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(accessToken string) (int, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
@@ -45,5 +45,6 @@ func ParseToken(accesstoken string) (int, error) {
 func GeneratePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
+	Jwt.salt = "12345"
 	return fmt.Sprintf("%x", hash.Sum([]byte(Jwt.salt)))
 }

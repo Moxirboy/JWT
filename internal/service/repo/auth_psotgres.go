@@ -14,7 +14,7 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 }
 
 type Authorization interface {
-	CreateUser(user j.User) (int, error)
+	CreateUsers(user j.User) (int, error)
 }
 type Repository struct {
 	Authorization

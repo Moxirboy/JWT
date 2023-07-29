@@ -1,12 +1,12 @@
 package v1
 
 import (
-	"JWT/internal/configs"
 	"JWT/internal/conn"
 	"JWT/internal/controller/http/v1/handler"
 	repository "JWT/internal/service/repo"
 	"JWT/internal/service/usecase"
 	json "JWT/pkg/jwt"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -17,8 +17,11 @@ func Router() *gin.Engine {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	server := usecase.NewService(db)
 	handle := handler.NewHandler(server)
-	if _, err := configs.InitConfig(); err != nil {
-		logrus.Fatalf("error initializing configs: %s", err.Error())
-	}
+	defer func() {
+		if err := recover(); err != nil {
+			// Handle the panic here
+			fmt.Println("Recovered from panic:", err)
+		}
+	}()
 	return handle.InitRoutes()
 }
