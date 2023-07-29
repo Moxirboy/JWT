@@ -5,7 +5,6 @@ import (
 	"JWT/internal/controller/http/v1/handler"
 	repository "JWT/internal/service/repo"
 	"JWT/internal/service/usecase"
-	json "JWT/pkg/jwt"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -13,7 +12,7 @@ import (
 
 func Router() *gin.Engine {
 	db := repository.NewRepo(conn.Db)
-	_ = json.GetterSigningKey()
+
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	server := usecase.NewService(db)
 	handle := handler.NewHandler(server)

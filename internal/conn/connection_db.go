@@ -2,6 +2,7 @@ package conn
 
 import (
 	"JWT/internal/configs"
+	"JWT/pkg/postgres"
 )
 
-var Db, _ = configs.NewPostgresConfig(configs.Configuration())
+var Db, _ = postgres.NewPostgresConfig(configs.Configuration())

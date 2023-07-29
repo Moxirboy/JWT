@@ -1,6 +1,7 @@
 package json
 
 import (
+	"JWT/internal/configs"
 	repository "JWT/internal/service/repo"
 	"crypto/sha1"
 	"fmt"
@@ -24,14 +25,14 @@ func GenerateToken(username string, password string) (string, error) {
 		},
 		user.Id,
 	})
-	return token.SignedString([]byte(Jwt.signingKey))
+	return token.SignedString([]byte(configs.Configuration().SigningKey))
 }
 func ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
-		return []byte(Jwt.signingKey), nil
+		return []byte(configs.Configuration().SigningKey), nil
 	})
 	if err != nil {
 		return 0, err
@@ -45,6 +46,6 @@ func ParseToken(accessToken string) (int, error) {
 func GeneratePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
-	Jwt.salt = "12345"
-	return fmt.Sprintf("%x", hash.Sum([]byte(Jwt.salt)))
+	configs.Configuration().Salt = "12345"
+	return fmt.Sprintf("%x", hash.Sum([]byte(configs.Configuration().Salt)))
 }

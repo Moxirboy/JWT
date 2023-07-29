@@ -2,35 +2,40 @@ package configs
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
+	"github.com/caarlos0/env/v6"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Host     string `env:"HOST"`
-	Port     string `env:"PORT"`
-	User     string `env:"USERNAME"`
-	Password string `env:"PASSWORD"`
-	DbName   string `env:"DBNAME"`
-	SSlMode  string `env:"MODELESS"`
+	AppName    string `env:"APP_NAME"`
+	AppVersion string `env:"APP_VERSION"`
+	Postgres
+	JWT
+}
+type Postgres struct {
+	Port     uint16 `env:"POSTGRES_PORT"`
+	Host     string `env:"POSTGRES_HOST"`
+	Password string `env:"POSTGRES_PASSWORD"`
+	User     string `env:"POSTGRES_USER"`
+	Database string `env:"POSTGRES_DB"`
+	PoolMax  int    `env:"POSTGRES_POOL_MAX"`
+}
+type JWT struct {
+	SigningKey string `env:"SIGNING"`
+	Salt       string `env:"SALT"`
+	TokenTTL   string `env:"TOKENTTL"`
 }
 
-var Instance Config
+var instance Config
 
 func Configuration() *Config {
-	// Load environment variables from the first file (.env)
 
-	Instance = Config{
-		Host:     "localhost",
-		Port:     "5436",
-		User:     "postgres",
-		Password: "qwerty",
-		DbName:   "postgres",
-		SSlMode:  "disable",
+	if err := env.Parse(&instance); err != nil {
+		panic(err)
 	}
-	fmt.Println("Instance")
-	fmt.Println(Instance)
-	return &Instance
+
+	return &instance
+
 }
 
 func InitConfig() (string, error) {
@@ -39,20 +44,4 @@ func InitConfig() (string, error) {
 	port := viper.GetString("port")
 	fmt.Println(port)
 	return port, viper.ReadInConfig()
-}
-func NewPostgresConfig(cfg *Config) (*sqlx.DB, error) {
-	//postgres:qwerty@localhost:5436/postgres?sslmode=disable
-	//cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DbName, cfg.SSlMode
-	db, err := sqlx.Connect("postgres", "postgres:qwerty@localhost:5436/postgres?sslmode=disable")
-	if err != nil {
-		return nil, err
-	}
-	if db != nil {
-		panic("no database connection")
-	}
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
 }
