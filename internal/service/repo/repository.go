@@ -10,10 +10,14 @@ import (
 func (r *AuthPostgres) CreateUsers(user j.User) (int, error) {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (name ,username,password_hash) values($1,$2,$3) RETURNING id", _const.UsersTable)
-	row := conn.Db.QueryRow(query, user.Name, user.Username, user.Password)
+	fmt.Println(user.Name)
+	if r.db != nil {
+		fmt.Println("no connection")
+	}
+
+	row := r.db.QueryRowx(query, user.Name, user.Username, user.Password)
 	if err := row.Scan(&id); err != nil {
 		panic(err)
-		return 0, err
 	}
 	return id, nil
 }

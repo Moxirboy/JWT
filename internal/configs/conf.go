@@ -3,7 +3,7 @@ package configs
 import (
 	"fmt"
 	"github.com/caarlos0/env/v6"
-	"github.com/spf13/viper"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Config struct {
@@ -11,19 +11,23 @@ type Config struct {
 	AppVersion string `env:"APP_VERSION"`
 	Postgres
 	JWT
+	InitConfig
 }
 type Postgres struct {
-	Port     uint16 `env:"POSTGRES_PORT"`
-	Host     string `env:"POSTGRES_HOST"`
-	Password string `env:"POSTGRES_PASSWORD"`
-	User     string `env:"POSTGRES_USER"`
-	Database string `env:"POSTGRES_DB"`
-	PoolMax  int    `env:"POSTGRES_POOL_MAX"`
+	Port     string `env:"PORT"`
+	Host     string `env:"HOST"`
+	Password string `env:"PASSWORD"`
+	User     string `env:"USER"`
+	Database string `env:"DBNAME"`
+	PoolMax  string `env:"MODELESS"`
 }
 type JWT struct {
 	SigningKey string `env:"SIGNING"`
 	Salt       string `env:"SALT"`
-	TokenTTL   string `env:"TOKENTTL"`
+	TokenTTL   string `env:"TOKEN_TTL"`
+}
+type InitConfig struct {
+	RunPort string `env:"RUN_PORT"`
 }
 
 var instance Config
@@ -33,15 +37,7 @@ func Configuration() *Config {
 	if err := env.Parse(&instance); err != nil {
 		panic(err)
 	}
-
+	fmt.Printf("%v", instance)
 	return &instance
 
-}
-
-func InitConfig() (string, error) {
-	viper.AddConfigPath(".")
-	viper.SetConfigName("configs")
-	port := viper.GetString("port")
-	fmt.Println(port)
-	return port, viper.ReadInConfig()
 }
