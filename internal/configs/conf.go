@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"github.com/caarlos0/env/v6"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -19,7 +18,7 @@ type Postgres struct {
 	Password string `env:"PASSWORD"`
 	User     string `env:"USER"`
 	Database string `env:"DBNAME"`
-	PoolMax  string `env:"MODELESS"`
+	SslMode  string `env:"SSLMODE"`
 }
 type JWT struct {
 	SigningKey string `env:"SIGNING"`
@@ -37,7 +36,6 @@ func Configuration() *Config {
 	if err := env.Parse(&instance); err != nil {
 		panic(err)
 	}
-	fmt.Printf("%v", instance)
 	return &instance
 
 }
